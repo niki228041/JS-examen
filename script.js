@@ -1,22 +1,85 @@
 
-const URL = "https://thronesapi.com/api/v2/Characters";
+const URL_ = "https://thronesapi.com/api/v2/Characters";
 var filter = "";
+const InfoSize_ = "300px";
+var mainCounter = 0;
+var countOfChars = 5;
+var infoViewer;
 
+
+window.addEventListener("load", Init);
 document.getElementById("search").addEventListener("keyup",()=>{findChar();setRows();});
 
 
-var res = fetch(URL)
-    .then((result)=>{
-        return result.json();
-    })
-    .catch(err=>{console.log(err);})
-    res.then(data=>{
-        localStorage.setItem("allCharacters",data)
-        console.log(data);
-        characters = new Characters(data);
-        setRows();
-})
 
+class InfoViewer
+{
+    constructor(id,firstName,lastName,fullName,title,family,image,imageUrl,imgOfChar)
+    {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.fullName = fullName;
+        this.title = title;
+        this.family = family;
+        this.image = image;
+        this.imageUrl = imageUrl;
+        this.imgOfChar = imgOfChar;
+
+        this.imgOfChar.style.width = InfoSize_;
+        this.imgOfChar.style.height = InfoSize_;
+        this.imgOfChar.style.maxWidth = InfoSize_;
+        this.imgOfChar.style.maxHeight = InfoSize_;
+        this.imgOfChar.style.objectFit = "cover";
+    }
+
+    set s_id(val)
+    {
+        this.id.innerHTML = val;
+    }
+
+    set s_firstName(val)
+    {
+        this.firstName.innerHTML = val;
+    }
+
+    set s_lastName(val)
+    {
+        this.lastName.innerHTML = val;
+    }
+
+    set s_fullName(val)
+    {
+        this.fullName.innerHTML = val;
+    }
+
+    set s_title(val)
+    {
+        this.title.innerHTML = val;
+    }
+
+    set s_family(val)
+    {
+        this.family.innerHTML = val;
+    }
+
+    set s_image(val)
+    {
+        this.image.innerHTML = val;
+    }
+
+    set s_imageUrl(val)
+    {
+        this.imageUrl.innerHTML = val;
+    }
+
+    set s_imgOfChar(val)
+    {
+        this.imgOfChar.src = val;
+    }
+
+
+}
 
 class Characters
 {
@@ -31,17 +94,42 @@ class Characters
 
 }
 
-var mainCounter = 0;
+function Init()
+{
+    infoViewer = new InfoViewer(
+        document.getElementById("id"),
+        document.getElementById("firstName"),
+        document.getElementById("lastName"),
+        document.getElementById("fullName"),
+        document.getElementById("title"),
+        document.getElementById("family"),
+        document.getElementById("image"),
+        document.getElementById("imageUrl"),
+        document.getElementById("imgOfChar")
+    )
 
-countOfChars = 5;
+    var res = fetch(URL_)
+    .then((result)=>{
+        return result.json();
+    })
+    .catch(err=>{console.log(err);})
+    res.then(data=>{
+        localStorage.setItem("allCharacters",data)
+        console.log(data);
+        characters = new Characters(data);
+        setRows();
+    })
+}
+
+
+
+
+
 
 function setRows()
 {
-
     var localCounter = mainCounter;
-
     var tableRef = document.getElementById("mainTBody");
-
     var mainRow = document.getElementById("mainRow");
 
     tableRef.innerHTML = "";
@@ -87,7 +175,6 @@ function setRows()
         newDiv.addEventListener("mouseleave",()=>{leaveAtCell(newDiv)})
         newDiv.addEventListener("click",()=>{clickAtChar(newId.innerHTML)});
 
-        console.log(filter);
 
         if(filter!="" && filter.length!=0)
         {
@@ -112,22 +199,6 @@ function setRows()
 
 }
 
-var id = document.getElementById("id");
-var firstName = document.getElementById("firstName");
-var lastName = document.getElementById("lastName");
-var fullName = document.getElementById("fullName");
-var title = document.getElementById("title");
-var family = document.getElementById("family");
-var image = document.getElementById("image");
-var imageUrl = document.getElementById("imageUrl");
-var imgOfChar = document.getElementById("imgOfChar");
-
-imgOfChar.style.width = "300px";
-imgOfChar.style.height = "300px";
-imgOfChar.style.maxWidth = "300px";
-imgOfChar.style.maxHeight = "300px";
-imgOfChar.style.objectFit = "cover";
-
 
 
 
@@ -146,15 +217,15 @@ function clickAtChar(val)
     console.log(val);
     var char = characters.get_all[val];
 
-    id.innerHTML = char.id;
-    firstName.innerHTML = char.firstName;
-    lastName.innerHTML = char.lastName;
-    fullName.innerHTML = char.fullName;
-    title.innerHTML = char.title;
-    family.innerHTML = char.family;
-    image.innerHTML = char.image;
-    imageUrl.innerHTML = char.imageUrl;
-    imgOfChar.src = char.imageUrl;
+    infoViewer.s_id = char.id;
+    infoViewer.s_firstName = char.firstName;
+    infoViewer.s_lastName = char.lastName;
+    infoViewer.s_fullName = char.fullName;
+    infoViewer.s_title = char.title;
+    infoViewer.s_family = char.family;
+    infoViewer.s_image = char.image;
+    infoViewer.s_imageUrl = char.imageUrl;
+    infoViewer.s_imgOfChar = char.imageUrl;
 }
 
 function changeCountOfChars(val)
@@ -184,5 +255,4 @@ function previewGroupOfChars()
 function findChar()
 {
     filter = document.getElementById("search").value;
-    console.log(filter.length);
 }
